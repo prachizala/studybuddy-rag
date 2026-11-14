@@ -20,6 +20,13 @@ def query_rag(req: QueryRequest, db: Session = Depends(get_db)):
     if not doc:
         raise HTTPException(status_code=404, detail="Document not found")
 
+    # Ensure ChatSession exists (P1 Fix: prevent foreign key failure)
+    session_obj = db.query(ChatSession).filter(ChatSession.id == req.session_id).first()
+    if not session_obj:
+        session_obj = ChatSession(id=req.session_id, document_id=doc.id, title=f"Study Session: {doc.filename}")
+        db.add(session_obj)
+        db.commit()
+
     # Load chunks
     chunks_db = db.query(DocumentChunk).filter(DocumentChunk.document_id == req.document_id).all()
     chunk_list = []
@@ -35,9 +42,9 @@ def query_rag(req: QueryRequest, db: Session = Depends(get_db)):
     response = llm_client.answer_query(req.query, top_chunks, doc.filename)
 
     # Save to session
-    msg_user = ChatMessage(session_id=req.session_id, role="user", content=req.query)
+    msg_user = ChatMessage(session_id=session_obj.id, role="user", content=req.query)
     msg_bot = ChatMessage(
-        session_id=req.session_id,
+        session_id=session_obj.id,
         role="assistant",
         content=response["answer"],
         citations_json=json.dumps(response.get("citations", []))
