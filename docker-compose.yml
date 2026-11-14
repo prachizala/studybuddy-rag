@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  studybuddy-rag:
+    build: .
+    container_name: studybuddy-rag
+    ports:
+      - "8001:8000"
+    environment:
+      - LLM_PROVIDER=mock
+    volumes:
+      - ./backend/studybuddy.db:/app/studybuddy.db
+    restart: unless-stopped
