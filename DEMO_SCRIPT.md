@@ -4,7 +4,7 @@
 **Target Audience**: Technical Recruiters, Examiners, Academic Mentors  
 
 ### [00:00 - 00:30] The Hallucination Problem in Study AI
-"Hello! I'm Prachi Zala. When students use standard ChatGPT or commercial LLMs to study, the models frequently hallucinate incorrect dates, formulas, or theorems not in their course syllabus. StudyBuddy RAG solves this through strictly grounded retrieval with zero tolerance for hallucinations."
+"Hello! I'm Prachi Zala. When students use standard commercial chatbots or commercial LLMs to study, the models frequently hallucinate incorrect dates, formulas, or theorems not in their course syllabus. StudyBuddy RAG solves this through strictly grounded retrieval with zero tolerance for hallucinations."
 
 ### [00:30 - 01:30] Grounded Q&A & Verifiable Citations
 "I've uploaded my Operating Systems notes. When I ask 'What is the role of an OS kernel?', notice how StudyBuddy answers exclusively from Page 1, attaching a clickable citation badge. If I test its anti-hallucination guard by asking an out-of-domain question like 'Who won the 1998 World Cup?', it strictly refuses: 'The uploaded material does not contain this information.'"

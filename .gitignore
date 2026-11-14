@@ -34,3 +34,13 @@ uploads/
 .idea/
 .DS_Store
 Thumbs.db
+# Tool-specific & IDE agent ignores
+.agent/
+.gemini/
+.cursor/
+.claude/
+GEMINI.md
+AGENTS.md
+scratchpads/
+transcripts/
+*.transcript

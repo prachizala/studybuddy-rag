@@ -6,7 +6,7 @@ StudyBuddy RAG utilizes a high-throughput asynchronous RAG pipeline:
 - **Frontend**: React 18 (Vite) + Tailwind CSS + Lucide Icons + React Markdown / SyntaxHighlighter.
 - **Backend API**: FastAPI asynchronous backend with modular endpoints (`/documents`, `/chat`, `/quiz`, `/summary`).
 - **Vector Database**: ChromaDB (embedded persistent vector store).
-- **Universal LLM Adapter**: `services/llm_client.py` abstracting Google Gemini, OpenAI, Groq, or mock deterministic offline generator for automated test suites.
+- **Universal LLM Adapter**: `services/llm_client.py` abstracting LLM API, OpenAI, Groq, or mock deterministic offline generator for automated test suites.
 
 ```mermaid
 graph TD

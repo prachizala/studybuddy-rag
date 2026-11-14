@@ -14,7 +14,7 @@ StudyBuddy RAG is an academic revision and document intelligence portal engineer
 3. **Executive Summary Mode**:
    - One-click synthesis of Core Concept summaries, Key Definitions, and Revision Takeaways.
 4. **Universal Provider-Agnostic LLM Client**:
-   - Works seamlessly with Google Gemini, OpenAI-compatible APIs, or an offline deterministic engine.
+   - Works seamlessly with LLM API, OpenAI-compatible APIs, or an offline deterministic engine.
 
 ---
 

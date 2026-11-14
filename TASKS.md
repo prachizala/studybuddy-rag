@@ -1,7 +1,7 @@
 # Task Management Board (Day 1 - Day 7)
 ## Project: StudyBuddy RAG
 
-| Task ID | Title / Work Item | Assignee Role | Status | Acceptance Criteria | Branch |
+| Task ID | Title / Work Item | Team Lead | Status | Acceptance Criteria | Branch |
 |---|---|---|---|---|---|
 | **T-SBR-001** | Day 1 Architecture & Specifications | Architect / PM | Done | PRD, ARCHITECTURE, DESIGN, and TASKS finalized | `docs/T-001-day1-specifications` |
 | **T-SBR-002** | Git Repository & CI Base Setup | DevOps Engineer | Done | `.gitignore`, `.env.example`, initial tag v0.1.0 | `chore/T-002-repo-setup` |
@@ -14,6 +14,6 @@
 | **T-SBR-009** | React Frontend Skeleton & Workspace UI | Frontend Engineer | Done | Split-panel layout, file drag-and-drop, tab navigation | `feat/T-009-frontend-ui` |
 | **T-SBR-010** | Citation Inspector & Source Viewer | Frontend Engineer | Done | Clickable citation badges opening source text verification drawer | `feat/T-010-citation-ui` |
 | **T-SBR-011** | Grounding & RAG Evaluation Test Suite | QA Engineer | Done | Pytest suite verifying zero hallucination on unanswerable queries | `test/T-011-rag-evaluation` |
-| **T-SBR-012** | Security & File Ingestion Hardening | Security Reviewer | Done | Upload sanitize checks, file size caps, no secret leaks | `sec/T-012-security-review` |
+| **T-SBR-012** | Security & File Ingestion Hardening | Security Lead | Done | Upload sanitize checks, file size caps, no secret leaks | `sec/T-012-security-review` |
 | **T-SBR-013** | Docker & Compose Deployment Setup | DevOps Engineer | Done | Multi-container setup with persistent ChromaDB volume | `chore/T-013-docker-setup` |
 | **T-SBR-014** | Documentation, Demo Script & v0.9.0 Tag | Technical Writer | Done | README.md, benchmark notes, demo video script | `docs/T-014-final-docs` |

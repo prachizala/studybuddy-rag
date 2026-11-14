@@ -21,7 +21,7 @@ Scope is strictly frozen at the conclusion of Day 1.
 #### MUST HAVE (Target MVP - Days 1-5)
 - **Document Ingestion Engine**: PDF and Markdown document upload, clean text extraction, recursive semantic chunking (chunk size: 800 tokens, overlap: 100 tokens), and metadata preservation (page number, chunk ID).
 - **ChromaDB Vector Store**: Local vector storage with persistent cosine distance embeddings.
-- **Provider-Agnostic LLM Connector**: Single standardized client interface (`llm_client.py`) reading API keys from `.env` supporting Gemini API, OpenAI-compatible endpoints, or local LLMs.
+- **Provider-Agnostic LLM Connector**: Single standardized client interface (`llm_client.py`) reading API keys from `.env` supporting cloud LLM APIs, OpenAI-compatible endpoints, or local LLMs.
 - **Strictly Grounded Chat Assistant**: System prompt engineering enforcing strict anti-hallucination guardrails: if an answer is absent from the uploaded source, the model must explicitly respond: *"The uploaded material does not contain this information."*
 - **Verifiable Source Citations**: Every generated response includes expandable citation badges detailing source document name, page number, and literal text chunk snippet.
 - **Active Recall Quiz Generator**: Automated generation of 5-question Multiple Choice Quizzes (MCQs) and concept flashcards derived exclusively from selected document chunks, with answer keys and rationale.
