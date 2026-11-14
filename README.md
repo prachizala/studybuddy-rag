@@ -4,7 +4,7 @@ StudyBuddy RAG is an academic revision and document intelligence portal engineer
 
 ---
 
-## 🌟 Key Features
+## Key Features
 
 1. **Strictly Grounded RAG Chat**:
    - Zero hallucination guardrail: if information is absent from notes, model explicitly returns: *"The uploaded material does not contain this information."*
@@ -18,7 +18,7 @@ StudyBuddy RAG is an academic revision and document intelligence portal engineer
 
 ---
 
-## 🚀 Quickstart Guide
+## Quickstart Guide
 
 ```bash
 cd backend
@@ -30,5 +30,5 @@ Open `http://localhost:8000` for the interactive RAG workspace.
 
 ---
 
-## 👤 Author
+## Author
 **Prachi Zala** | [GitHub](https://github.com/prachizala)
