@@ -35,3 +35,20 @@ def test_strict_grounding_anti_hallucination():
     ans_absent = llm_client.answer_query("Who won the 1998 FIFA World Cup final in Paris?", chunks, "Notes.pdf")
     assert ans_absent["answer"] == GROUNDING_UNANSWERABLE_REPLY
     assert len(ans_absent["citations"]) == 0
+
+
+def test_pdf_upload_stream_extraction():
+    import fitz
+    doc = fitz.open()
+    page = doc.new_page()
+    page.insert_text((50, 50), "Distributed systems achieve high availability through replication.")
+    pdf_bytes = doc.write()
+    doc.close()
+
+    # Verify fitz stream reading
+    opened = fitz.open(stream=pdf_bytes, filetype="pdf")
+    extracted = opened[0].get_text()
+    opened.close()
+
+    assert "replication" in extracted
+    assert len(extracted) > 20

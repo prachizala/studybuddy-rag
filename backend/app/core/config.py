@@ -1,5 +1,5 @@
 import os
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
     PROJECT_NAME: str = "StudyBuddy RAG"
@@ -7,11 +7,9 @@ class Settings(BaseSettings):
     DATABASE_URL: str = os.getenv("DATABASE_URL", "sqlite:///./studybuddy.db")
     LLM_PROVIDER: str = os.getenv("LLM_PROVIDER", "mock")
     LLM_API_KEY: str = os.getenv("LLM_API_KEY", "")
-    OPENAI_API_KEY: str = os.getenv("OPENAI_API_KEY", "")
     SIMILARITY_TOP_K: int = 3
     STRICT_GROUNDING_THRESHOLD: float = 0.25
 
-    class Config:
-        case_sensitive = True
+    model_config = SettingsConfigDict(case_sensitive=True)
 
 settings = Settings()
