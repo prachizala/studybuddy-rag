@@ -66,3 +66,28 @@ def test_p2_query_error_handling():
     # 404 for non-existent quiz document
     quiz_res = client.get("/api/v1/quiz/generate/99999")
     assert quiz_res.status_code in [200, 404]
+
+
+def test_chunking_boundary_and_overlap_invariance():
+    # Verify exact word slicing and overlap retention
+    words = [f"word{i}" for i in range(120)]
+    text = " ".join(words)
+    chunks = chunk_text(text, chunk_size=50, overlap=10)
+    
+    # 120 words with chunk_size 50, step 40 => [0:50], [40:90], [80:120] => 3 chunks
+    assert len(chunks) == 3
+    assert chunks[0].split()[-10:] == chunks[1].split()[:10]
+
+def test_quiz_generator_schema_and_options():
+    from app.services.quiz_service import QuizGenerator
+    generator = QuizGenerator()
+    quiz = generator.generate_quiz("OS Notes", [{"text": "Sample chunk", "page": 1}])
+    
+    assert "questions" in quiz
+    assert len(quiz["questions"]) >= 1
+    for q in quiz["questions"]:
+        assert "question" in q
+        assert "options" in q
+        assert len(q["options"]) == 4
+        assert "correct_index" in q
+        assert 0 <= q["correct_index"] < 4
