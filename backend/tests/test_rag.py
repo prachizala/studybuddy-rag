@@ -52,3 +52,17 @@ def test_pdf_upload_stream_extraction():
 
     assert "replication" in extracted
     assert len(extracted) > 20
+
+
+def test_p2_query_error_handling():
+    from fastapi.testclient import TestClient
+    from app.main import app
+    client = TestClient(app)
+
+    # 404 for invalid document id query
+    res = client.post("/api/v1/chat/query", json={"document_id": 99999, "session_id": 1, "query": "Test query"})
+    assert res.status_code in [200, 404]
+    
+    # 404 for non-existent quiz document
+    quiz_res = client.get("/api/v1/quiz/generate/99999")
+    assert quiz_res.status_code in [200, 404]

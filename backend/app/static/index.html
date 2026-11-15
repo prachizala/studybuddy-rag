@@ -8,84 +8,139 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     body { background-color: #0b0f17; color: #f1f5f9; font-family: system-ui, -apple-system, sans-serif; }
+    .animate-spin-slow { animation: spin 2s linear infinite; }
+    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
   </style>
 </head>
-<body class="min-h-screen flex flex-col">
+<body class="min-h-screen flex flex-col bg-slate-950 text-slate-100">
   <!-- Top Navigation -->
-  <header class="bg-slate-950/80 border-b border-slate-800 px-6 py-4 flex items-center justify-between backdrop-blur">
+  <header class="bg-slate-900/90 border-b border-slate-800 px-4 sm:px-6 py-3.5 flex items-center justify-between sticky top-0 z-20 backdrop-blur">
     <div class="flex items-center space-x-3">
-      <div class="w-10 h-10 rounded-xl bg-violet-600 flex items-center justify-center text-white text-xl font-bold shadow-lg shadow-violet-500/20">
+      <div class="w-9 h-9 rounded-xl bg-violet-600 flex items-center justify-center text-white text-lg font-bold shadow-lg shadow-violet-500/20">
         <i class="fa-solid fa-brain"></i>
       </div>
       <div>
-        <h1 class="font-bold text-lg leading-tight tracking-tight">StudyBuddy RAG</h1>
+        <h1 class="font-bold text-base sm:text-lg leading-tight tracking-tight flex items-center gap-2">
+          StudyBuddy RAG
+          <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-violet-500/10 text-violet-400 border border-violet-500/20">v0.9.1</span>
+        </h1>
         <p class="text-xs text-slate-400">Strictly Grounded Study Assistant & Quiz Engine</p>
       </div>
     </div>
-    <div class="flex items-center space-x-3">
-      <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-violet-500/10 text-violet-400 border border-violet-500/20">
+    <div class="flex items-center space-x-2 sm:space-x-3">
+      <span class="hidden sm:inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-violet-500/10 text-violet-400 border border-violet-500/20">
         <span class="w-1.5 h-1.5 rounded-full bg-violet-400 mr-1.5 animate-pulse"></span> Zero Hallucination Mode
       </span>
-      <a href="/docs" target="_blank" class="text-xs bg-slate-900 hover:bg-slate-800 text-slate-300 px-3 py-1.5 rounded-lg border border-slate-800 transition">
+      <a href="/docs" target="_blank" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg border border-slate-700 transition">
         API Docs
       </a>
     </div>
   </header>
 
+  <!-- Global Error Banner -->
+  <div id="errorAlert" class="hidden max-w-7xl w-full mx-auto px-4 sm:px-6 pt-4">
+    <div class="bg-rose-500/10 border border-rose-500/30 rounded-xl p-3 sm:p-4 flex items-center justify-between gap-3 text-rose-400 text-xs sm:text-sm">
+      <div class="flex items-center gap-2">
+        <i class="fa-solid fa-triangle-exclamation text-rose-400"></i>
+        <span id="errorMessage">An unexpected error occurred.</span>
+      </div>
+      <button onclick="dismissError()" class="text-rose-400 hover:text-rose-200 underline text-xs">Dismiss</button>
+    </div>
+  </div>
+
   <!-- Workspace Container -->
-  <main class="flex-1 max-w-7xl w-full mx-auto p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
-    <!-- Left Panel: Documents & Chunk Explorer (4 Cols) -->
-    <div class="lg:col-span-4 space-y-6">
-      <div class="bg-slate-900/80 rounded-2xl border border-slate-800 p-5 shadow-xl">
-        <h2 class="text-sm font-semibold uppercase tracking-wider text-slate-400 mb-3">Active Document</h2>
-        <div class="p-4 bg-slate-950 rounded-xl border border-slate-800 flex items-center space-x-3">
-          <i class="fa-solid fa-file-pdf text-rose-400 text-2xl"></i>
-          <div class="overflow-hidden">
-            <p class="font-semibold text-sm text-white truncate" id="docName">BCA_OS_Networking_MasterNotes.pdf</p>
-            <p class="text-xs text-slate-400">3 Pages • 3 Chunks Indexed</p>
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+    <!-- Left Sidebar: Documents & Navigation (4 Cols) -->
+    <div class="lg:col-span-4 space-y-4 sm:space-y-6">
+      <div class="bg-slate-900/90 rounded-2xl border border-slate-800 p-4 sm:p-5 shadow-xl">
+        <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3 flex items-center justify-between">
+          <span>Active Document</span>
+          <span class="text-[10px] text-emerald-400 font-mono bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">Indexed</span>
+        </h2>
+        <div class="p-3.5 bg-slate-950 rounded-xl border border-slate-800 flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-lg bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-400 text-xl flex-shrink-0">
+            <i class="fa-solid fa-file-pdf"></i>
+          </div>
+          <div class="overflow-hidden min-w-0">
+            <p class="font-semibold text-xs sm:text-sm text-white truncate" id="docName">BCA_OS_Networking_MasterNotes.pdf</p>
+            <p class="text-[11px] text-slate-400 mt-0.5">3 Pages • 3 Chunks Indexed (PyMuPDF)</p>
           </div>
         </div>
       </div>
 
-      <div class="bg-slate-900/80 rounded-2xl border border-slate-800 p-5 shadow-xl">
-        <h2 class="text-sm font-semibold uppercase tracking-wider text-slate-400 mb-3">Modes</h2>
-        <div class="space-y-2">
-          <button onclick="switchTab('chat')" id="tabChat" class="w-full text-left px-4 py-2.5 rounded-xl text-xs font-medium bg-violet-600 text-white flex items-center justify-between">
-            <span><i class="fa-solid fa-comments mr-2"></i> Grounded Chat</span>
-            <i class="fa-solid fa-chevron-right text-[10px]"></i>
+      <div class="bg-slate-900/90 rounded-2xl border border-slate-800 p-4 sm:p-5 shadow-xl">
+        <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3">Study Modes</h2>
+        <div class="grid grid-cols-3 sm:grid-cols-1 gap-2">
+          <button onclick="switchTab('chat')" id="tabChat" class="text-left px-3 sm:px-4 py-2.5 rounded-xl text-xs font-medium bg-violet-600 text-white flex items-center justify-between transition">
+            <span><i class="fa-solid fa-comments sm:mr-2"></i> <span class="hidden sm:inline">Grounded Chat</span></span>
+            <i class="fa-solid fa-chevron-right text-[10px] hidden sm:inline"></i>
           </button>
-          <button onclick="switchTab('quiz')" id="tabQuiz" class="w-full text-left px-4 py-2.5 rounded-xl text-xs font-medium bg-slate-800/60 hover:bg-slate-800 text-slate-300 flex items-center justify-between">
-            <span><i class="fa-solid fa-circle-question mr-2"></i> Active Recall Quiz</span>
-            <i class="fa-solid fa-chevron-right text-[10px]"></i>
+          <button onclick="switchTab('quiz')" id="tabQuiz" class="text-left px-3 sm:px-4 py-2.5 rounded-xl text-xs font-medium bg-slate-800/60 hover:bg-slate-800 text-slate-300 flex items-center justify-between transition">
+            <span><i class="fa-solid fa-circle-question sm:mr-2"></i> <span class="hidden sm:inline">Recall Quiz</span></span>
+            <i class="fa-solid fa-chevron-right text-[10px] hidden sm:inline"></i>
           </button>
-          <button onclick="switchTab('summary')" id="tabSummary" class="w-full text-left px-4 py-2.5 rounded-xl text-xs font-medium bg-slate-800/60 hover:bg-slate-800 text-slate-300 flex items-center justify-between">
-            <span><i class="fa-solid fa-file-lines mr-2"></i> Executive Summary</span>
-            <i class="fa-solid fa-chevron-right text-[10px]"></i>
+          <button onclick="switchTab('summary')" id="tabSummary" class="text-left px-3 sm:px-4 py-2.5 rounded-xl text-xs font-medium bg-slate-800/60 hover:bg-slate-800 text-slate-300 flex items-center justify-between transition">
+            <span><i class="fa-solid fa-file-lines sm:mr-2"></i> <span class="hidden sm:inline">Summary</span></span>
+            <i class="fa-solid fa-chevron-right text-[10px] hidden sm:inline"></i>
           </button>
         </div>
+      </div>
+
+      <div class="bg-slate-900/90 rounded-2xl border border-slate-800 p-4 text-xs text-slate-400 space-y-2">
+        <p class="font-semibold text-slate-300 flex items-center gap-1.5">
+          <i class="fa-solid fa-circle-info text-violet-400"></i> Grounding Guarantee
+        </p>
+        <p class="text-[11px] leading-relaxed">
+          If a query is outside the indexed document chunks, StudyBuddy refuses with:
+          <span class="block font-mono text-[10px] text-violet-300 bg-slate-950 p-1.5 mt-1 rounded border border-slate-800">
+            "The uploaded material does not contain this information."
+          </span>
+        </p>
       </div>
     </div>
 
     <!-- Right Panel: Viewport (8 Cols) -->
-    <div class="lg:col-span-8 bg-slate-900/80 rounded-2xl border border-slate-800 p-6 flex flex-col shadow-xl">
+    <div class="lg:col-span-8 bg-slate-900/90 rounded-2xl border border-slate-800 p-4 sm:p-6 flex flex-col shadow-xl min-h-[500px]">
       <!-- Chat View -->
       <div id="viewChat" class="flex-1 flex flex-col space-y-4">
         <div class="border-b border-slate-800 pb-3 flex items-center justify-between">
-          <h2 class="text-base font-semibold text-white">Grounded Q&A Chat</h2>
-          <span class="text-xs text-slate-400"><i class="fa-solid fa-shield-halved text-emerald-400 mr-1"></i> Strictly Verified Sources</span>
+          <div>
+            <h2 class="text-sm sm:text-base font-semibold text-white">Grounded Q&A Workspace</h2>
+            <p class="text-xs text-slate-400">Strictly verified character-trigram cosine vector matching</p>
+          </div>
+          <span class="text-xs text-slate-400 hidden sm:inline-flex items-center">
+            <i class="fa-solid fa-shield-halved text-emerald-400 mr-1.5"></i> Verifiable Retrieval
+          </span>
         </div>
 
-        <div id="chatMessages" class="flex-1 overflow-y-auto space-y-4 min-h-[360px] max-h-[460px] p-2">
-          <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 max-w-[85%] space-y-2">
-            <p class="text-xs text-violet-400 font-semibold"><i class="fa-solid fa-robot mr-1"></i> StudyBuddy RAG</p>
-            <p class="text-sm text-slate-200">Hello Prachi! I am grounded on your <b>BCA Operating Systems & Networking</b> notes. Ask me anything about kernel architecture, paging, or TCP/IP.</p>
+        <div id="chatMessages" class="flex-1 overflow-y-auto space-y-3.5 min-h-[320px] max-h-[440px] p-2">
+          <!-- Initial Assistant Welcome Message -->
+          <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 max-w-[90%] sm:max-w-[85%] space-y-1.5">
+            <p class="text-xs text-violet-400 font-semibold flex items-center gap-1.5">
+              <i class="fa-solid fa-robot"></i> StudyBuddy RAG
+            </p>
+            <p class="text-xs sm:text-sm text-slate-200 leading-relaxed">
+              Hello Prachi! I am grounded on your <b>BCA Operating Systems & Networking</b> master notes. Ask me anything about kernel architecture, paging, or TCP/IP routing.
+            </p>
           </div>
         </div>
 
-        <div class="mt-4 pt-3 border-t border-slate-800 flex space-x-2">
-          <input id="queryInput" type="text" placeholder="e.g. What is the role of an OS kernel?" class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-violet-500">
-          <button onclick="sendQuery()" class="bg-violet-600 hover:bg-violet-500 text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition">
-            Send
+        <!-- Chat Input Form -->
+        <div class="pt-3 border-t border-slate-800 flex space-x-2">
+          <input 
+            id="queryInput" 
+            type="text" 
+            placeholder="e.g. What is the role of an OS kernel?" 
+            onkeydown="if(event.key === 'Enter') sendQuery()"
+            class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-violet-500 placeholder-slate-500"
+          >
+          <button 
+            id="sendBtn" 
+            onclick="sendQuery()" 
+            class="bg-violet-600 hover:bg-violet-500 disabled:opacity-50 text-white px-4 sm:px-6 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition flex items-center gap-2"
+          >
+            <span>Send</span>
+            <i class="fa-solid fa-paper-plane text-xs"></i>
           </button>
         </div>
       </div>
@@ -93,8 +148,13 @@
       <!-- Quiz View -->
       <div id="viewQuiz" class="hidden flex-1 flex flex-col space-y-4">
         <div class="border-b border-slate-800 pb-3 flex items-center justify-between">
-          <h2 class="text-base font-semibold text-white">5-Question Active Recall Quiz</h2>
-          <button onclick="loadQuiz()" class="text-xs text-violet-400 hover:text-violet-300">Regenerate</button>
+          <div>
+            <h2 class="text-sm sm:text-base font-semibold text-white">5-Question Active Recall Quiz</h2>
+            <p class="text-xs text-slate-400">Synthesized directly from verified lecture chunks</p>
+          </div>
+          <button onclick="loadQuiz()" class="text-xs text-violet-400 hover:text-violet-300 font-medium flex items-center gap-1">
+            <i class="fa-solid fa-rotate-right"></i> Regenerate
+          </button>
         </div>
         <div id="quizContainer" class="space-y-4 overflow-y-auto max-h-[500px]">
           <!-- Loaded dynamically -->
@@ -104,17 +164,32 @@
       <!-- Summary View -->
       <div id="viewSummary" class="hidden flex-1 flex flex-col space-y-4">
         <div class="border-b border-slate-800 pb-3">
-          <h2 class="text-base font-semibold text-white">Executive Document Summary</h2>
+          <h2 class="text-sm sm:text-base font-semibold text-white">Executive Document Summary</h2>
+          <p class="text-xs text-slate-400">High-level revision sheet and key definitions</p>
         </div>
-        <div id="summaryContent" class="space-y-4 text-sm text-slate-300 leading-relaxed">
+        <div id="summaryContent" class="space-y-4 text-xs sm:text-sm text-slate-300 leading-relaxed">
           <!-- Loaded dynamically -->
         </div>
       </div>
     </div>
   </main>
 
+  <!-- Footer -->
+  <footer class="border-t border-slate-900 bg-slate-950 px-4 sm:px-6 py-3.5 text-center text-xs text-slate-400">
+    StudyBuddy RAG • Built by Prachi Zala • PyMuPDF, Cosine Retrieval & FastAPI
+  </footer>
+
   <script>
     let activeTab = 'chat';
+
+    function showError(msg) {
+      document.getElementById('errorMessage').innerText = msg;
+      document.getElementById('errorAlert').classList.remove('hidden');
+    }
+
+    function dismissError() {
+      document.getElementById('errorAlert').classList.add('hidden');
+    }
 
     function switchTab(tab) {
       activeTab = tab;
@@ -122,9 +197,12 @@
       document.getElementById('viewQuiz').classList.toggle('hidden', tab !== 'quiz');
       document.getElementById('viewSummary').classList.toggle('hidden', tab !== 'summary');
 
-      document.getElementById('tabChat').className = tab === 'chat' ? 'w-full text-left px-4 py-2.5 rounded-xl text-xs font-medium bg-violet-600 text-white flex items-center justify-between' : 'w-full text-left px-4 py-2.5 rounded-xl text-xs font-medium bg-slate-800/60 hover:bg-slate-800 text-slate-300 flex items-center justify-between';
-      document.getElementById('tabQuiz').className = tab === 'quiz' ? 'w-full text-left px-4 py-2.5 rounded-xl text-xs font-medium bg-violet-600 text-white flex items-center justify-between' : 'w-full text-left px-4 py-2.5 rounded-xl text-xs font-medium bg-slate-800/60 hover:bg-slate-800 text-slate-300 flex items-center justify-between';
-      document.getElementById('tabSummary').className = tab === 'summary' ? 'w-full text-left px-4 py-2.5 rounded-xl text-xs font-medium bg-violet-600 text-white flex items-center justify-between' : 'w-full text-left px-4 py-2.5 rounded-xl text-xs font-medium bg-slate-800/60 hover:bg-slate-800 text-slate-300 flex items-center justify-between';
+      const activeClass = 'text-left px-3 sm:px-4 py-2.5 rounded-xl text-xs font-medium bg-violet-600 text-white flex items-center justify-between transition';
+      const inactiveClass = 'text-left px-3 sm:px-4 py-2.5 rounded-xl text-xs font-medium bg-slate-800/60 hover:bg-slate-800 text-slate-300 flex items-center justify-between transition';
+
+      document.getElementById('tabChat').className = tab === 'chat' ? activeClass : inactiveClass;
+      document.getElementById('tabQuiz').className = tab === 'quiz' ? activeClass : inactiveClass;
+      document.getElementById('tabSummary').className = tab === 'summary' ? activeClass : inactiveClass;
 
       if (tab === 'quiz') loadQuiz();
       if (tab === 'summary') loadSummary();
@@ -132,16 +210,29 @@
 
     async function sendQuery() {
       const input = document.getElementById('queryInput');
+      const sendBtn = document.getElementById('sendBtn');
       const q = input.value.trim();
       if (!q) return;
 
       const container = document.getElementById('chatMessages');
       container.innerHTML += `
-        <div class="ml-auto bg-violet-600/30 border border-violet-500/30 p-3.5 rounded-2xl max-w-[80%] text-sm text-white">
+        <div class="ml-auto bg-violet-600/30 border border-violet-500/30 p-3 sm:p-3.5 rounded-2xl max-w-[85%] sm:max-w-[80%] text-xs sm:text-sm text-white">
           ${q}
         </div>
       `;
       input.value = '';
+
+      // Add loading spinner message
+      const loadingId = 'loading_' + Date.now();
+      container.innerHTML += `
+        <div id="${loadingId}" class="bg-slate-950 p-4 rounded-2xl border border-slate-800 max-w-[85%] space-y-2 flex items-center gap-2 text-xs text-violet-400">
+          <i class="fa-solid fa-circle-notch fa-spin"></i>
+          <span>Retrieving chunks & calculating cosine relevance...</span>
+        </div>
+      `;
+      container.scrollTop = container.scrollHeight;
+
+      sendBtn.disabled = true;
 
       try {
         const res = await fetch('/api/v1/chat/query', {
@@ -149,6 +240,14 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ document_id: 1, session_id: 1, query: q })
         });
+
+        const loadingElem = document.getElementById(loadingId);
+        if (loadingElem) loadingElem.remove();
+
+        if (!res.ok) {
+          throw new Error('Server returned HTTP ' + res.status);
+        }
+
         const data = await res.json();
         let citationHtml = '';
         if (data.citations && data.citations.length > 0) {
@@ -156,7 +255,7 @@
             <div class="mt-3 pt-2 border-t border-slate-800/80 flex flex-wrap gap-2">
               ${data.citations.map(c => `
                 <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] bg-slate-800 text-slate-300 border border-slate-700">
-                  <i class="fa-solid fa-bookmark mr-1 text-violet-400"></i> Page ${c.page} (Relevance: ${(c.relevance_score*100).toFixed(0)}%)
+                  <i class="fa-solid fa-bookmark mr-1 text-violet-400"></i> Page ${c.page} (Score: ${(c.relevance_score*100).toFixed(0)}%)
                 </span>
               `).join('')}
             </div>
@@ -164,27 +263,53 @@
         }
 
         container.innerHTML += `
-          <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 max-w-[85%] space-y-2">
+          <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 max-w-[90%] sm:max-w-[85%] space-y-2">
             <p class="text-xs text-violet-400 font-semibold"><i class="fa-solid fa-robot mr-1"></i> StudyBuddy RAG</p>
-            <p class="text-sm text-slate-200">${data.answer}</p>
+            <p class="text-xs sm:text-sm text-slate-200 leading-relaxed">${data.answer}</p>
             ${citationHtml}
           </div>
         `;
         container.scrollTop = container.scrollHeight;
       } catch (err) {
-        console.error(err);
+        const loadingElem = document.getElementById(loadingId);
+        if (loadingElem) loadingElem.remove();
+        showError('Query retrieval failed. Please check network connectivity or backend status.');
+        container.innerHTML += `
+          <div class="bg-rose-500/10 p-3.5 rounded-2xl border border-rose-500/20 max-w-[85%] text-xs text-rose-400">
+            <i class="fa-solid fa-circle-exclamation mr-1.5"></i> Unable to connect to retrieval engine.
+          </div>
+        `;
+      } finally {
+        sendBtn.disabled = false;
       }
     }
 
     async function loadQuiz() {
       const container = document.getElementById('quizContainer');
-      container.innerHTML = '<p class="text-xs text-slate-400">Generating questions...</p>';
+      container.innerHTML = `
+        <div class="py-12 flex flex-col items-center justify-center space-y-3 text-slate-400">
+          <i class="fa-solid fa-circle-notch fa-spin text-2xl text-violet-500"></i>
+          <p class="text-xs">Generating 5-question active recall quiz from verified notes...</p>
+        </div>
+      `;
       try {
         const res = await fetch('/api/v1/quiz/generate/1');
+        if (!res.ok) throw new Error('HTTP ' + res.status);
         const data = await res.json();
+        
+        if (!data.questions || data.questions.length === 0) {
+          container.innerHTML = `
+            <div class="p-8 border border-dashed border-slate-800 rounded-xl text-center text-slate-400 text-xs">
+              <i class="fa-solid fa-book-open text-xl mb-2 text-slate-500"></i>
+              <p>No questions could be generated from the selected document.</p>
+            </div>
+          `;
+          return;
+        }
+
         container.innerHTML = data.questions.map(q => `
           <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
-            <p class="font-medium text-sm text-white">${q.id}. ${q.question}</p>
+            <p class="font-medium text-xs sm:text-sm text-white">${q.id}. ${q.question}</p>
             <div class="space-y-1.5">
               ${q.options.map((opt, idx) => `
                 <label class="flex items-center space-x-2 text-xs text-slate-300 p-2 rounded-lg bg-slate-900/60 hover:bg-slate-900 cursor-pointer">
@@ -197,7 +322,13 @@
           </div>
         `).join('');
       } catch (err) {
-        console.error(err);
+        showError('Failed to generate quiz. Check backend server connection.');
+        container.innerHTML = `
+          <div class="p-6 bg-slate-950 border border-slate-800 rounded-xl text-center text-xs text-slate-400">
+            <p class="text-rose-400 mb-2">Quiz generation endpoint offline.</p>
+            <button onclick="loadQuiz()" class="px-3 py-1.5 bg-slate-800 rounded text-slate-200 hover:bg-slate-700">Retry</button>
+          </div>
+        `;
       }
     }
 
@@ -206,7 +337,7 @@
       fb.classList.remove('hidden');
       if (selected === correct) {
         fb.className = 'text-xs p-2.5 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20';
-        fb.innerHTML = '<i class="fa-solid fa-circle-check mr-1"></i> Correct! Well done.';
+        fb.innerHTML = '<i class="fa-solid fa-circle-check mr-1"></i> Correct! Concept grounded in document.';
       } else {
         fb.className = 'text-xs p-2.5 rounded-lg bg-rose-500/10 text-rose-400 border border-rose-500/20';
         fb.innerHTML = '<i class="fa-solid fa-circle-xmark mr-1"></i> Incorrect. Review the source notes.';
@@ -215,24 +346,42 @@
 
     async function loadSummary() {
       const container = document.getElementById('summaryContent');
-      container.innerHTML = '<p class="text-xs text-slate-400">Synthesizing executive summary...</p>';
+      container.innerHTML = `
+        <div class="py-12 flex flex-col items-center justify-center space-y-3 text-slate-400">
+          <i class="fa-solid fa-circle-notch fa-spin text-2xl text-violet-500"></i>
+          <p class="text-xs">Extracting key terminology and synthesizing summary...</p>
+        </div>
+      `;
       try {
         const res = await fetch('/api/v1/summary/generate/1');
+        if (!res.ok) throw new Error('HTTP ' + res.status);
         const data = await res.json();
         container.innerHTML = `
-          <div class="p-4 bg-slate-950 rounded-xl border border-slate-800 space-y-2">
-            <h3 class="font-semibold text-white text-sm">Executive Overview</h3>
-            <p class="text-slate-300">${data.executive_summary}</p>
+          <div class="p-4 sm:p-5 bg-slate-950 rounded-xl border border-slate-800 space-y-2">
+            <h3 class="font-semibold text-white text-xs sm:text-sm flex items-center gap-2">
+              <i class="fa-solid fa-align-left text-violet-400"></i>
+              Executive Overview
+            </h3>
+            <p class="text-slate-300 text-xs sm:text-sm leading-relaxed">${data.executive_summary}</p>
           </div>
-          <div class="p-4 bg-slate-950 rounded-xl border border-slate-800 space-y-2">
-            <h3 class="font-semibold text-white text-sm">Key Vocabulary</h3>
-            <ul class="space-y-1">
-              ${data.key_definitions.map(d => `<li><b class="text-violet-400">${d.term}:</b> ${d.definition}</li>`).join('')}
+          <div class="p-4 sm:p-5 bg-slate-950 rounded-xl border border-slate-800 space-y-2">
+            <h3 class="font-semibold text-white text-xs sm:text-sm flex items-center gap-2">
+              <i class="fa-solid fa-book-bookmark text-violet-400"></i>
+              Key Vocabulary & Definitions
+            </h3>
+            <ul class="space-y-2 text-xs sm:text-sm">
+              ${data.key_definitions.map(d => `<li class="p-2 rounded bg-slate-900/40 border border-slate-800/60"><b class="text-violet-300">${d.term}:</b> <span class="text-slate-300">${d.definition}</span></li>`).join('')}
             </ul>
           </div>
         `;
       } catch (err) {
-        console.error(err);
+        showError('Failed to load executive summary.');
+        container.innerHTML = `
+          <div class="p-6 bg-slate-950 border border-slate-800 rounded-xl text-center text-xs text-slate-400">
+            <p class="text-rose-400 mb-2">Summary endpoint offline.</p>
+            <button onclick="loadSummary()" class="px-3 py-1.5 bg-slate-800 rounded text-slate-200 hover:bg-slate-700">Retry</button>
+          </div>
+        `;
       }
     }
   </script>
