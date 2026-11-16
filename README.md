@@ -1,6 +1,6 @@
 # StudyBuddy RAG: Strictly Grounded Study Assistant & Quiz Engine (Prototype)
 
-> **Note:** This early RAG prototype has been superseded by our comprehensive academic intelligence platform [NoteIQ (Ai_Notes_Rating_System)](https://github.com/prachizala/Ai_Notes_Rating_System) and [Enterprise Knowledge Copilot](https://github.com/prachizala/enterprise-knowledge-copilot). Maintained as a lightweight reference.
+> **Note:** This early RAG prototype has been superseded by our comprehensive academic intelligence platform [Ai_Notes_Rating_System](https://github.com/prachizala/Ai_Notes_Rating_System) and [Enterprise Knowledge Copilot](https://github.com/prachizala/enterprise-knowledge-copilot). Maintained as a lightweight reference.
 
 [![StudyBuddy RAG CI](https://github.com/prachizala/studybuddy-rag/actions/workflows/ci.yml/badge.svg)](https://github.com/prachizala/studybuddy-rag/actions/workflows/ci.yml)
 [![Python Version](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/)
@@ -78,7 +78,7 @@ pytest backend/tests/test_rag.py -v
 
 ## Flagship Supersession Notice
 This repository is retained as an architectural lightweight reference for deterministic chunking and strict retrieval grounding. For production academic intelligence and enterprise search systems, explore:
-- **[NoteIQ (Ai_Notes_Rating_System)](https://github.com/prachizala/Ai_Notes_Rating_System)**: Comprehensive academic notes evaluation, multi-attribute scoring, and automated feedback suite.
+- **[Ai_Notes_Rating_System](https://github.com/prachizala/Ai_Notes_Rating_System)**: Comprehensive academic notes evaluation, multi-attribute scoring, and automated feedback suite.
 - **[Enterprise Knowledge Copilot](https://github.com/prachizala/enterprise-knowledge-copilot)**: Hybrid dense/sparse vector retrieval with reranking, cross-encoder scoring, and citation provenance.
 
 ---

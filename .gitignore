@@ -44,3 +44,6 @@ AGENTS.md
 scratchpads/
 transcripts/
 *.transcript
+
+*.db
+backend/*.db
